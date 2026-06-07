@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full bleed green background for maskable safe zone -->
+  <rect width="512" height="512" fill="#16a34a"/>
+  <!-- Timer face within the maskable safe zone (radius 170, well within 80% safe area) -->
+  <circle cx="256" cy="256" r="170" fill="#d4d4d4"/>
+  <!-- Timer arc: 75% filled -->
+  <path d="M256,256 L256,86 A170,170 0 1,1 86,256 Z" fill="#22c55e"/>
+</svg>

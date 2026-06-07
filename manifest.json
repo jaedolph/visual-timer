@@ -1,0 +1,54 @@
+{
+  "name": "Visual Timer",
+  "short_name": "Timer",
+  "description": "A child-friendly visual countdown timer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f0f0",
+  "theme_color": "#22c55e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/app-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icons/app-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icons/app-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "1 minute – Red",
+      "short_name": "1 min",
+      "url": "/?t=60&c=ef4444",
+      "icons": [{ "src": "icons/shortcut-1m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "5 minutes – Green",
+      "short_name": "5 min",
+      "url": "/?t=300&c=22c55e",
+      "icons": [{ "src": "icons/shortcut-5m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "10 minutes – Blue",
+      "short_name": "10 min",
+      "url": "/?t=600&c=3b82f6",
+      "icons": [{ "src": "icons/shortcut-10m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "15 minutes – Orange",
+      "short_name": "15 min",
+      "url": "/?t=900&c=f97316",
+      "icons": [{ "src": "icons/shortcut-15m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <circle cx="256" cy="256" r="234" fill="#d4d4d4"/>
+  <!-- Timer arc: 75% filled, clockwise from 12 o'clock to 9 o'clock -->
+  <path d="M256,256 L256,22 A234,234 0 1,1 22,256 Z" fill="#22c55e"/>
+</svg>

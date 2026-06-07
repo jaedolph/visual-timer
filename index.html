@@ -7,6 +7,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Visual Timer</title>
   <link id="favicon" rel="icon" type="image/png" href="">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/app-192.svg">
+  <meta name="theme-color" id="theme-color" content="#22c55e">
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -174,6 +177,18 @@
       border-color: #555;
     }
 
+    #share-btn {
+      flex: 0 0 auto;
+      width: clamp(44px, 12vw, 56px);
+      max-width: none;
+      background: #ddd;
+      color: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
     /* ── Custom time modal ── */
     .modal-overlay {
       display: none;
@@ -323,6 +338,13 @@
     <button class="action-btn" id="start-btn">Start</button>
     <button class="action-btn" id="reset-btn">Reset</button>
     <button class="action-btn" id="time-btn">Show time</button>
+    <button class="action-btn" id="share-btn" aria-label="Share this timer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+        <polyline points="16 6 12 2 8 6"/>
+        <line x1="12" y1="2" x2="12" y2="15"/>
+      </svg>
+    </button>
   </div>
 
   <div class="modal-overlay" id="modal">
@@ -602,6 +624,7 @@
       // Apply color without triggering updateURL yet
       color = '#' + hex;
       document.documentElement.style.setProperty('--color', color);
+      document.getElementById('theme-color').setAttribute('content', color);
       document.getElementById('color-picker').value = color;
       const matchSwatch = document.querySelector(`.swatch[data-color="${color}"]`);
       document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
@@ -625,6 +648,7 @@
     function applyColor(c) {
       color = c;
       document.documentElement.style.setProperty('--color', c);
+      document.getElementById('theme-color').setAttribute('content', c);
       draw();
       updateURL();
     }
@@ -712,6 +736,24 @@
       if (e.key === 'Escape') modal.classList.remove('open');
     });
 
+    // ── Share / shortcut creation ──────────────────────────────────────────
+    const SHARE_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>`;
+    const CHECK_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      const url = window.location.href;
+      const shareBtn = document.getElementById('share-btn');
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: 'Visual Timer', url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          shareBtn.innerHTML = CHECK_ICON;
+          setTimeout(() => { shareBtn.innerHTML = SHARE_ICON; }, 1500);
+        }
+      } catch (_) {}
+    });
+
     // ── Responsive resize ──────────────────────────────────────────────────
     new ResizeObserver(resize).observe(wrap);
 
@@ -719,7 +761,12 @@
     applyURLState();
     resize();
     updateUI();
-    updateURL(); // set hash + favicon from initial (or URL-loaded) state
+    updateURL();
+
+    // ── Service Worker (offline support) ───────────────────────────────────
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
   </script>
 </body>
 </html>
