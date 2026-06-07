@@ -33,15 +33,21 @@
       "icons": [{ "src": "icons/shortcut-1m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
     },
     {
-      "name": "5 minutes – Green",
+      "name": "2 minutes – Blue",
+      "short_name": "2 min",
+      "url": "/?t=120&c=3b82f6",
+      "icons": [{ "src": "icons/shortcut-2m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "5 minutes – Brown",
       "short_name": "5 min",
-      "url": "/?t=300&c=22c55e",
+      "url": "/?t=300&c=92400e",
       "icons": [{ "src": "icons/shortcut-5m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
     },
     {
-      "name": "10 minutes – Blue",
+      "name": "10 minutes – Purple",
       "short_name": "10 min",
-      "url": "/?t=600&c=3b82f6",
+      "url": "/?t=600&c=a855f7",
       "icons": [{ "src": "icons/shortcut-10m.svg", "sizes": "96x96", "type": "image/svg+xml" }]
     },
     {

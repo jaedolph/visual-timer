@@ -1,4 +1,4 @@
-const CACHE = 'visual-timer-v1';
+const CACHE = 'visual-timer-v2';
 const ASSETS = [
   '/',
   '/manifest.json',
@@ -7,6 +7,7 @@ const ASSETS = [
   '/icons/app-512.svg',
   '/icons/app-maskable.svg',
   '/icons/shortcut-1m.svg',
+  '/icons/shortcut-2m.svg',
   '/icons/shortcut-5m.svg',
   '/icons/shortcut-10m.svg',
   '/icons/shortcut-15m.svg',
