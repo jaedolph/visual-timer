@@ -584,17 +584,19 @@
     }
 
     // ── URL state ──────────────────────────────────────────────────────────
+    // Uses query params (?t=300&c=ef4444) rather than hash fragments so that
+    // Android Chrome "Add to Home Screen" preserves the state in the shortcut URL.
     function updateURL() {
       const secs = Math.round(duration / 1000);
-      history.replaceState(null, '', `#${secs},${color.replace('#', '')}`);
+      const params = new URLSearchParams({ t: secs, c: color.replace('#', '') });
+      history.replaceState(null, '', '?' + params.toString());
       updateFavicon();
     }
 
     function applyURLState() {
-      const hash = window.location.hash.slice(1);
-      if (!hash) return;
-      const [secStr, hex] = hash.split(',');
-      const secs = parseInt(secStr);
+      const params = new URLSearchParams(window.location.search);
+      const secs = parseInt(params.get('t'));
+      const hex  = params.get('c');
       if (!(secs > 0) || !hex || !/^[0-9a-fA-F]{6}$/.test(hex)) return;
 
       // Apply color without triggering updateURL yet
