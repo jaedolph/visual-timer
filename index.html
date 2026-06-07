@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Visual Timer</title>
+  <link id="favicon" rel="icon" type="image/png" href="">
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -463,6 +464,7 @@
       complete  = false;
       draw();
       updateUI();
+      updateURL();
     }
 
     function onComplete() {
@@ -547,11 +549,82 @@
       } catch (_) { /* audio unavailable */ }
     }
 
+    // ── Favicon ────────────────────────────────────────────────────────────
+    function updateFavicon() {
+      const size = 64;
+      const fc = document.createElement('canvas');
+      fc.width = fc.height = size;
+      const fctx = fc.getContext('2d');
+      const cx = size / 2, cy = size / 2, r = size * 0.46;
+
+      // Gray background disc
+      fctx.beginPath();
+      fctx.arc(cx, cy, r, 0, 2 * Math.PI);
+      fctx.fillStyle = '#d4d4d4';
+      fctx.fill();
+
+      // Full filled circle
+      fctx.beginPath();
+      fctx.arc(cx, cy, r, 0, 2 * Math.PI);
+      fctx.fillStyle = color;
+      fctx.fill();
+
+      // Label: minutes (or seconds for sub-minute durations)
+      const totalSec = Math.round(duration / 1000);
+      const label = totalSec >= 60 ? String(Math.round(totalSec / 60)) : `${totalSec}s`;
+      fctx.font = `bold ${Math.round(size * 0.48)}px sans-serif`;
+      fctx.textAlign = 'center';
+      fctx.textBaseline = 'middle';
+      fctx.shadowColor = 'rgba(0,0,0,0.55)';
+      fctx.shadowBlur = 4;
+      fctx.fillStyle = 'white';
+      fctx.fillText(label, cx, cy);
+
+      document.getElementById('favicon').href = fc.toDataURL('image/png');
+    }
+
+    // ── URL state ──────────────────────────────────────────────────────────
+    function updateURL() {
+      const secs = Math.round(duration / 1000);
+      history.replaceState(null, '', `#${secs},${color.replace('#', '')}`);
+      updateFavicon();
+    }
+
+    function applyURLState() {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return;
+      const [secStr, hex] = hash.split(',');
+      const secs = parseInt(secStr);
+      if (!(secs > 0) || !hex || !/^[0-9a-fA-F]{6}$/.test(hex)) return;
+
+      // Apply color without triggering updateURL yet
+      color = '#' + hex;
+      document.documentElement.style.setProperty('--color', color);
+      document.getElementById('color-picker').value = color;
+      const matchSwatch = document.querySelector(`.swatch[data-color="${color}"]`);
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      if (matchSwatch) matchSwatch.classList.add('active');
+      else document.getElementById('swatch-custom').classList.add('active');
+
+      // Apply duration
+      duration  = secs * 1000;
+      remaining = duration;
+      complete  = false;
+
+      // Highlight matching preset button if any
+      const mins = secs / 60;
+      const matchPreset = document.querySelector(`.preset-btn[data-min="${mins}"]`);
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      if (matchPreset) matchPreset.classList.add('active');
+      else document.getElementById('custom-preset-btn').classList.add('active');
+    }
+
     // ── Colour ─────────────────────────────────────────────────────────────
     function applyColor(c) {
       color = c;
       document.documentElement.style.setProperty('--color', c);
       draw();
+      updateURL();
     }
 
     document.querySelector('.color-row').addEventListener('click', e => {
@@ -641,8 +714,10 @@
     new ResizeObserver(resize).observe(wrap);
 
     // ── Init ───────────────────────────────────────────────────────────────
+    applyURLState();
     resize();
     updateUI();
+    updateURL(); // set hash + favicon from initial (or URL-loaded) state
   </script>
 </body>
 </html>
