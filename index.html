@@ -21,15 +21,10 @@
       --color: #22c55e;
     }
 
-    html {
-      height: -webkit-fill-available;
-    }
-
     body {
       display: flex;
       flex-direction: column;
       height: 100vh;
-      height: -webkit-fill-available;
       height: 100dvh;
       background: #f0f0f0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
@@ -761,7 +756,17 @@
     });
 
     // ── Responsive resize ──────────────────────────────────────────────────
-    new ResizeObserver(resize).observe(wrap);
+    // window.innerHeight always reflects the visible viewport on iOS Safari,
+    // unlike 100vh/dvh which can include browser chrome on older versions.
+    function fixBodyHeight() {
+      document.body.style.height = window.innerHeight + 'px';
+    }
+    fixBodyHeight();
+    window.addEventListener('resize', function() { fixBodyHeight(); resize(); });
+
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(resize).observe(wrap);
+    }
 
     // ── Init ───────────────────────────────────────────────────────────────
     applyURLState();
