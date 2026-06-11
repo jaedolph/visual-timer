@@ -87,6 +87,7 @@
     /* ── Color swatches ── */
     .color-row {
       display: flex;
+      gap: 0.6rem;
       gap: clamp(0.4rem, 2vw, 0.8rem);
       padding: 0.3rem 0.7rem;
       justify-content: center;
@@ -94,7 +95,9 @@
     }
 
     .swatch {
+      width: 36px;
       width: clamp(30px, 7vw, 42px);
+      height: 36px;
       height: clamp(30px, 7vw, 42px);
       border-radius: 50%;
       border: 3px solid transparent;
@@ -368,6 +371,20 @@
   </div>
 
   <script>
+    // ── Audio context (shared + pre-unlocked for iOS Safari) ──────────────
+    let sharedAC = null;
+    function getAudioContext() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!sharedAC) sharedAC = new AC();
+      if (sharedAC.state === 'suspended') sharedAC.resume();
+      return sharedAC;
+    }
+    // iOS Safari won't allow audio outside a user gesture unless we
+    // pre-create and resume the context during one.
+    document.addEventListener('touchstart', getAudioContext, { once: true });
+    document.addEventListener('click', getAudioContext, { once: true });
+
     // ── State ──────────────────────────────────────────────────────────────
     let duration  = 5 * 60 * 1000;   // ms
     let remaining = duration;
@@ -514,9 +531,8 @@
     // ── Sound ──────────────────────────────────────────────────────────────
     function playChime() {
       try {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
-        const ac = new AC();
+        const ac = getAudioContext();
+        if (!ac) return;
         const fadeIn  = 2.5;
         const hold    = 0.4;
         const fadeOut = 2.0;
